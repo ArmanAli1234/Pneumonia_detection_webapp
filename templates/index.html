@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>PneumoScan AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="background"></div>
+
+
+<nav class="navbar">
+
+    <div class="logo">
+        🫁 PneumoScan <span>AI</span>
+    </div>
+
+    <div class="nav-text">
+        Chest X-Ray Analysis
+    </div>
+
+</nav>
+
+
+<main class="container">
+
+
+    <!-- Hero Section -->
+
+    <section class="hero">
+
+        <div class="badge">
+            ✦ AI-Powered X-Ray Analysis
+        </div>
+
+        <h1>
+            Detect Pneumonia
+            <span>with AI</span>
+        </h1>
+
+        <p>
+            Upload a chest X-ray image and let our deep learning
+            model analyze it for potential pneumonia patterns.
+        </p>
+
+    </section>
+
+
+
+    <!-- Upload Card -->
+
+    <section class="upload-card">
+
+        <form method="POST"
+              enctype="multipart/form-data">
+
+
+            <div class="upload-area">
+
+                <div class="upload-icon">
+                    🩻
+                </div>
+
+                <h2>
+                    Upload Chest X-Ray
+                </h2>
+
+                <p>
+                    Drag & drop your image here
+                    or choose a file
+                </p>
+
+
+                <label class="choose-btn">
+
+                    Choose X-Ray
+
+                    <input
+                        type="file"
+                        name="file"
+                        accept=".jpg,.jpeg,.png"
+                        onchange="showFileName(this)"
+                        required
+                    >
+
+                </label>
+
+
+                <p id="file-name"
+                   class="file-name">
+                </p>
+
+                <small>
+                    Supported formats: JPG, JPEG, PNG
+                </small>
+
+            </div>
+
+
+            <button class="analyze-btn"
+                    type="submit">
+
+                Analyze X-Ray
+                <span>→</span>
+
+            </button>
+
+        </form>
+
+    </section>
+
+
+
+    {% if error %}
+
+    <div class="error-box">
+
+        ⚠️ {{ error }}
+
+    </div>
+
+    {% endif %}
+
+
+
+    {% if prediction %}
+
+    <!-- Result Section -->
+
+    <section class="result-card">
+
+
+        <div class="result-header">
+
+            <div>
+
+                <p class="result-label">
+                    AI ANALYSIS RESULT
+                </p>
+
+                <h2>
+                    Prediction
+                </h2>
+
+            </div>
+
+            {% if prediction == "Pneumonia" %}
+
+                <div class="status danger">
+                    Pneumonia
+                </div>
+
+            {% else %}
+
+                <div class="status safe">
+                    Normal
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+
+        <div class="result-content">
+
+
+            <!-- Image -->
+
+            <div class="image-section">
+
+                <p>
+                    Uploaded X-Ray
+                </p>
+
+                <img src="{{ image_path }}"
+                     alt="Chest X-Ray"
+                     class="xray-image">
+
+            </div>
+
+
+
+            <!-- Result -->
+
+            <div class="analysis-section">
+
+                <div class="prediction-title">
+
+                    {% if prediction == "Pneumonia" %}
+
+                        <span class="result-icon danger-icon">
+                            ⚠
+                        </span>
+
+                        <div>
+                            <h3>
+                                Pneumonia Detected
+                            </h3>
+
+                            <p>
+                                The model identified patterns
+                                associated with pneumonia.
+                            </p>
+                        </div>
+
+                    {% else %}
+
+                        <span class="result-icon safe-icon">
+                            ✓
+                        </span>
+
+                        <div>
+                            <h3>
+                                Normal
+                            </h3>
+
+                            <p>
+                                No pneumonia pattern was detected
+                                by the model.
+                            </p>
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+
+                <!-- Probability -->
+
+                <div class="confidence-box">
+
+                    <div class="confidence-header">
+
+                        <span>
+                            Model Confidence
+                        </span>
+
+                        <strong>
+                            {{ "%.2f"|format(probability * 100) }}%
+                        </strong>
+
+                    </div>
+
+
+                    <div class="progress">
+
+                        <div
+                            class="progress-bar
+                            {% if prediction == 'Pneumonia' %}
+                                pneumonia-bar
+                            {% else %}
+                                normal-bar
+                            {% endif %}"
+                            style="width: {{ probability * 100 }}%">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="model-info">
+
+                    <div>
+                        <span>Model</span>
+                        <strong>EfficientNetB2 (Transfer Learning)</strong>
+                    </div>
+
+                    <div>
+                        <span>Input Size</span>
+                        <strong>224 × 224</strong>
+                    </div>
+
+                    <div>
+                        <span>Task</span>
+                        <strong>Binary Classification</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="disclaimer">
+
+            ⚕️ <strong>Important:</strong>
+            This prototype is for educational and research
+            purposes only. It is not a medical diagnosis and
+            should not replace evaluation by a qualified healthcare
+            professional.
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+</main>
+
+
+
+<footer>
+
+    <p>
+        PneumoScan AI • Deep Learning Project
+    </p>
+
+</footer>
+
+
+
+<script>
+
+function showFileName(input) {
+
+    const fileName = document.getElementById("file-name");
+
+    if (input.files.length > 0) {
+
+        fileName.innerText =
+            "Selected: " + input.files[0].name;
+
+    }
+
+}
+
+</script>
+
+
+</body>
+
+</html>
