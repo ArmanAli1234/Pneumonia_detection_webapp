@@ -425,7 +425,7 @@ The application supports:
 ## 1. Clone the Repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone https://github.com/ArmanAli1234/Pneumonia_detection_webapp.git
 cd Pneumonia_detection
 ```
 
